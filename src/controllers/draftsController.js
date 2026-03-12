@@ -3,20 +3,45 @@ import Draft from '../models/draft.js';
 
 // GET ALL
 export const getDrafts = async (req, res) => {
-  const { page = 1, perPage = 10, categoryId } = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const perPage = parseInt(req.query.perPage) || 10;
+  const { categoryId, search = '' } = req.query;
+
   const skip = (page - 1) * perPage;
   const draftQuery = Draft.find();
 
-  // filter
+  //  Добавляем фильтры
   if (categoryId) {
     draftQuery.where('categoryId').equals(categoryId);
   }
+  // поиск по тегу
+  // if (search) {
+  //   draftQuery.where({
+  //     tags: { $regex: search, $options: 'i' },
+  //   });
+  // }
 
+  // поиск по тегу и title и content
+  if (search) {
+    // Мы используем find() для добавления сложных условий в текущий запрос
+    draftQuery.find({
+      $or: [
+        { title: { $regex: search, $options: 'i' } },
+        { tags: { $regex: search, $options: 'i' } },
+        { content: { $regex: search, $options: 'i' } },
+      ],
+    });
+  }
+
+  //   Выполняем запросы параллельно
+  // Клонируем основной запрос для подсчета общего кол-ва БЕЗ учета лимитов страницы
   const [totalItems, drafts] = await Promise.all([
     draftQuery.clone().countDocuments(),
-    draftQuery.skip(skip).limit(perPage),
+    draftQuery.clone().skip(skip).limit(perPage),
   ]);
+
   const totalPages = Math.ceil(totalItems / perPage);
+
   res.status(200).json({
     page,
     perPage,
@@ -25,6 +50,7 @@ export const getDrafts = async (req, res) => {
     drafts,
   });
 };
+
 // const drafts = await Draft.find();
 // res.status(200).json(drafts);
 

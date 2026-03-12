@@ -10,13 +10,14 @@ import { celebrate } from 'celebrate';
 import {
   createDraftSchema,
   draftIdParamSchema,
+  getDraftsSchema,
   updateDraftSchema,
 } from '../validations/draftValidation.js';
 
 const router = Router();
 
 // GET ВСЕХ
-router.get('/drafts', getDrafts);
+router.get('/drafts', celebrate(getDraftsSchema), getDrafts);
 
 // GET ОДНОГО
 router.get('/drafts/:draftId', celebrate(draftIdParamSchema), getDraftById);
