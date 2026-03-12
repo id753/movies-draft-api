@@ -53,5 +53,6 @@ export const getStudentsSchema = {
   [Segments.QUERY]: Joi.object({
     page: Joi.number().integer().min(1),
     perPage: Joi.number().integer().min(5).max(20),
+    categoryId: Joi.string().valid('0', '1', '2', '3', '4', '5'),
   }),
 };

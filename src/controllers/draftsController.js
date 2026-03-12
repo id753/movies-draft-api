@@ -3,9 +3,14 @@ import Draft from '../models/draft.js';
 
 // GET ALL
 export const getDrafts = async (req, res) => {
-  const { page = 1, perPage = 10 } = req.query;
+  const { page = 1, perPage = 10, categoryId } = req.query;
   const skip = (page - 1) * perPage;
   const draftQuery = Draft.find();
+
+  // filter
+  if (categoryId) {
+    draftQuery.where('categoryId').equals(categoryId);
+  }
 
   const [totalItems, drafts] = await Promise.all([
     draftQuery.clone().countDocuments(),
