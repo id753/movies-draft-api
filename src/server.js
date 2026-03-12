@@ -6,6 +6,7 @@ import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import draftsRoutes from './routes/draftsRoutes.js';
+import { errors } from 'celebrate';
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
@@ -25,6 +26,8 @@ app.use(draftsRoutes);
 // Middleware 404
 app.use(notFoundHandler);
 
+// обробка помилок від celebrate (валідація)
+app.use(errors());
 // Middleware для обробки помилок
 app.use(errorHandler);
 
