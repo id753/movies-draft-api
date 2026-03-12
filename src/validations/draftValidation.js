@@ -54,6 +54,10 @@ export const getDraftsSchema = {
     page: Joi.number().integer().min(1),
     perPage: Joi.number().integer().min(5).max(20),
     categoryId: Joi.string().valid('0', '1', '2', '3', '4', '5'),
+
     search: Joi.string().allow('').max(50),
+
+    sortBy: Joi.string().valid('_id', 'title', 'categoryId').default('_id'),
+    sortOrder: Joi.string().valid('asc', 'desc').default('asc'),
   }),
 };

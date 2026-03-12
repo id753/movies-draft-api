@@ -5,7 +5,12 @@ import Draft from '../models/draft.js';
 export const getDrafts = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const perPage = parseInt(req.query.perPage) || 10;
-  const { categoryId, search = '' } = req.query;
+  const {
+    categoryId,
+    search = '',
+    sortBy = '_id',
+    sortOrder = 'asc',
+  } = req.query;
 
   const skip = (page - 1) * perPage;
   const draftQuery = Draft.find();
@@ -33,11 +38,13 @@ export const getDrafts = async (req, res) => {
     });
   }
 
-  //   Выполняем запросы параллельно
-  // Клонируем основной запрос для подсчета общего кол-ва БЕЗ учета лимитов страницы
   const [totalItems, drafts] = await Promise.all([
     draftQuery.clone().countDocuments(),
-    draftQuery.clone().skip(skip).limit(perPage),
+    draftQuery
+      .clone()
+      .skip(skip)
+      .limit(perPage)
+      .sort({ [sortBy]: sortOrder }),
   ]);
 
   const totalPages = Math.ceil(totalItems / perPage);
