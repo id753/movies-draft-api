@@ -10,16 +10,17 @@ const draftSchema = new Schema(
     },
     content: {
       type: String,
-      required: [true, 'Content is required'],
+      // required: [true, 'Content is required'],
     },
     categoryId: {
       type: String,
-      required: [true, 'Category ID is required'],
+      required: true,
+      enum: ['0', '1', '2', '3', '4', '5'],
     },
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User', // Ссылка на модель User
-      required: true,
+      // required: true,
     },
     tags: {
       type: String, // В твоем типе Draft это строка
