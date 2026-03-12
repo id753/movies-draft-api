@@ -48,3 +48,10 @@ export const updateDraftSchema = {
     tags: Joi.string().min(3).max(30).allow(''),
   }).min(1),
 };
+
+export const getStudentsSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1),
+    perPage: Joi.number().integer().min(5).max(20),
+  }),
+};

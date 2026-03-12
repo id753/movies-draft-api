@@ -3,9 +3,25 @@ import Draft from '../models/draft.js';
 
 // GET ALL
 export const getDrafts = async (req, res) => {
-  const drafts = await Draft.find();
-  res.status(200).json(drafts);
+  const { page = 1, perPage = 10 } = req.query;
+  const skip = (page - 1) * perPage;
+  const draftQuery = Draft.find();
+
+  const [totalItems, drafts] = await Promise.all([
+    draftQuery.clone().countDocuments(),
+    draftQuery.skip(skip).limit(perPage),
+  ]);
+  const totalPages = Math.ceil(totalItems / perPage);
+  res.status(200).json({
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    drafts,
+  });
 };
+// const drafts = await Draft.find();
+// res.status(200).json(drafts);
 
 // GET ID
 export const getDraftById = async (req, res, next) => {
